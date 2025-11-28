@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII WEB - Générateur</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <img src="https://i.ibb.co/Pzzfkdn8/Git-Hub-Logo-White.png" alt="GitHub Logo">
+            </div>
+            <h1>ASCII WEB</h1>
+        </header>
+
+        <main class="content">
+            <div class="control-panel">
+                <section class="ascii-art-web">
+                    <h2>ASCII ART WEB</h2>
+                    <label for="text-input">VOTRE TEXTE:</label>
+                    <input type="text" id="text-input" placeholder="Entrez votre texte ici">
+
+                    <button id="font-select-button" class="btn">POLICE ASCII</button>
+
+                    <button id="generate-button" class="btn-primary">GÉNÉRER</button>
+                </section>
+
+                <section class="color-picker">
+                    <div class="color-grid">
+                        <div class="color-option" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                        <div class="color-option selected" style="background-color: #ffffff;" data-color="#ffffff"></div>
+                        <div class="color-option" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                        <div class="color-option" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                        <div class="color-option" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                        <div class="color-option" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                        <div class="color-option" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                        <div class="color-option" style="background-color: #808080;" data-color="#808080"></div>
+                        <div class="color-option" style="background-color: #ffa500;" data-color="#ffa500"></div>
+                        <div class="color-option" style="background-color: #ffc0cb;" data-color="#ffc0cb"></div>
+                        <div class="color-option" style="background-color: #f7a38a;" data-color="#f7a38a"></div>
+                        <div class="color-option" style="background-color: #87ceeb;" data-color="#87ceeb"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="output-panel">
+                <div class="output-box" id="ascii-output-container">
+                    <pre id="ascii-output-text">Contenu de l'Art ASCII Généré</pre>
+                    <button class="download-btn" id="download-ascii" title="Télécharger"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
+                </div>
+
+                <div class="output-box" id="color-code-output-container">
+                    <label for="color-code-output">couleur</label>
+                    <textarea id="color-code-output" readonly>Code pour la couleur</textarea>
+                    <button class="download-btn" id="download-color" title="Télécharger"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
