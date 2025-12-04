@@ -24,7 +24,12 @@
                     <label for="text-input">VOTRE TEXTE:</label>
                     <input type="text" id="text-input" placeholder="Entrez votre texte ici">
 
-                    <button id="font-select-button" class="btn">POLICE ASCII</button>
+                    <label for="font-select">POLICE D'ÉCRITURE:</label>
+                    <select id="font-select" class="font-dropdown">
+                        <option value="standard">Standard</option>
+                        <option value="shadow">Shadow</option>
+                        <option value="tinkertoy">Tinkertoy</option>
+                    </select>
 
                     <button id="generate-button" class="btn-primary">GÉNÉRER</button>
                 </section>
@@ -50,13 +55,8 @@
             <div class="output-panel">
                 <div class="output-box" id="ascii-output-container">
                     <pre id="ascii-output-text">Contenu de l'Art ASCII Généré</pre>
+                    <button class="copy-btn" id="copy-ascii" title="Copier dans le presse-papiers"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                     <button class="download-btn" id="download-ascii" title="Télécharger"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
-                </div>
-
-                <div class="output-box" id="color-code-output-container">
-                    <label for="color-code-output">couleur</label>
-                    <textarea id="color-code-output" readonly>Code pour la couleur</textarea>
-                    <button class="download-btn" id="download-color" title="Télécharger"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
                 </div>
             </div>
         </main>

@@ -498,3 +498,81 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-color);
 }
+
+/* Liste déroulante - Font Select */
+#font-select {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border: 2px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 10px;
+  font-size: 1em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#font-select:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.15), 0 4px 12px rgba(138, 180, 248, 0.2);
+  background-color: #1d1f27;
+}
+
+#font-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.15), 0 4px 12px rgba(138, 180, 248, 0.2);
+  background-color: #1d1f27;
+}
+
+#font-select option {
+  background-color: #1a1c22;
+  color: var(--text-color);
+  padding: 10px;
+}
+
+/* Bouton Copier */
+.copy-btn {
+  position: absolute;
+  top: 16px;
+  right: 70px;
+  background: linear-gradient(135deg, var(--input-bg) 0%, #1d1f27 100%);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.copy-btn:hover {
+  background: linear-gradient(135deg, #252831 0%, #2d3039 100%);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 16px rgba(138, 180, 248, 0.3);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.copy-btn:active {
+  transform: translateY(0) scale(1);
+}
+
+.copy-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--primary-color);
+  filter: drop-shadow(0 1px 3px rgba(138, 180, 248, 0.3));
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover svg {
+  fill: var(--primary-hover);
+  transform: translateY(1px);
+}
