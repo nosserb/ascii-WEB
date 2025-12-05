@@ -5,16 +5,21 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var templates *template.Template
 
 func init() {
-	// Analyser tous les templates dans le répertoire templates
+	// Analyser tous les templates
 	var err error
 	templates, err = template.ParseGlob("templates/*.html")
 	if err != nil {
 		log.Fatalf("Error parsing templates: %v", err)
+	}
+	// Ajouter aussi index.html de la racine
+	if _, err := templates.ParseGlob("index.html"); err != nil {
+		log.Fatalf("Error parsing index.html: %v", err)
 	}
 }
 
@@ -58,23 +63,14 @@ func asciiArtHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text := r.FormValue("text")     // Supposant que le nom de l'entrée est "text" ou similaire, vérifier index.html
-	banner := r.FormValue("banner") // Supposant "banner"
+	r.ParseForm()
+	text := r.FormValue("text")
+	banner := r.FormValue("banner")
 
-	// Vérifier index.html pour voir les noms réels des entrées.
-	// Basé sur le view_file précédent de index.html :
-	// <input type="text" id="text-input" ...> -> Cela pourrait être pour JS.
-	// Attendez, index.html semble utiliser JS pour envoyer des requêtes ?
-	// Vérifions script.js pour voir comment il envoie les données.
-	// Si c'est une soumission de formulaire, nous utilisons FormValue. Si c'est JSON/fetch, nous devons décoder JSON.
-	// L'exigence de l'utilisateur dit "POST /ascii-art -> reçoit le texte et le type de bannière".
-	// Je vais supposer une soumission de formulaire standard ou je dois vérifier script.js.
-	// Pour l'instant, je vais implémenter la gestion de formulaire de base, mais je devrais vérifier script.js.
+	// Nettoyer les \r
+	text = strings.ReplaceAll(text, "\r", "")
 
 	if text == "" {
-		// Essayer de lire depuis le corps si pas dans le formulaire (ex: JSON)
-		// Mais pour l'instant supposons des données de formulaire ou des paramètres de requête.
-		// Si le texte est vide, peut-être renvoyer 400 ?
 		errorHandler(w, http.StatusBadRequest)
 		return
 	}
@@ -86,9 +82,6 @@ func asciiArtHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Juste écrire le résultat en texte brut ou JSON ?
-	// L'utilisateur a dit "renvoie le résultat ASCII".
-	// Si le frontend attend juste la chaîne, nous l'écrivons.
 	w.Write([]byte(result))
 }
 

@@ -55,13 +55,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Envoyer une requête POST au serveur
-      const formData = new FormData()
-      formData.append("text", textToConvert)
-      formData.append("banner", selectedBanner)
+      // Nettoyer le texte : remplacer \r\n par \n, puis \r par \n
+      const cleanedText = textToConvert.replace(/\r\n/g, "\n").replace(/\r/g, "\n")
+
+      // Envoyer en URL encoded au lieu de FormData pour éviter les \r parasites
+      const params = new URLSearchParams()
+      params.append("text", cleanedText)
+      params.append("banner", selectedBanner)
 
       const response = await fetch("/ascii-art", {
         method: "POST",
-        body: formData
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: params
       })
 
       if (!response.ok) {

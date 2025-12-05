@@ -95,7 +95,9 @@ func printASCII(text string, font map[rune][]string) (string, error) {
 			for _, char := range line {
 				charLines, exists := font[char]
 				if !exists {
-					return "", fmt.Errorf("unsupported character: %q", char)
+					// Remplacer les caractères non supportés par un espace
+					char = ' '
+					charLines, _ = font[char]
 				}
 
 				if len(charLines) < lineHeight {
@@ -118,7 +120,7 @@ func printASCII(text string, font map[rune][]string) (string, error) {
 func AsciiArt(text, bannerName string) (string, error) {
 	// Replace literal \n with actual newlines
 	text = strings.ReplaceAll(text, "\\n", "\n")
-	
+
 	// Default banner style
 	if bannerName == "" {
 		bannerName = "standard"
