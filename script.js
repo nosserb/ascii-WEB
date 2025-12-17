@@ -1,4 +1,32 @@
+// --- Gestion du Mode Jour/Nuit et Génération ASCII ---
 document.addEventListener("DOMContentLoaded", () => {
+  // ===== GESTION DU THÈME JOUR/NUIT =====
+  const themeCheckbox = document.getElementById("theme-checkbox")
+  
+  // Vérifier s'il y a une préférence sauvegardée
+  const savedTheme = localStorage.getItem("theme") || "dark"
+  
+  // Appliquer le thème sauvegardé
+  if (savedTheme === "light") {
+    document.body.classList.add("light-mode")
+    themeCheckbox.checked = true
+  } else {
+    document.body.classList.remove("light-mode")
+    themeCheckbox.checked = false
+  }
+  
+  // Écouter les changements du bouton
+  themeCheckbox.addEventListener("change", () => {
+    if (themeCheckbox.checked) {
+      document.body.classList.add("light-mode")
+      localStorage.setItem("theme", "light")
+    } else {
+      document.body.classList.remove("light-mode")
+      localStorage.setItem("theme", "dark")
+    }
+  })
+
+  // ===== GESTION DE LA GÉNÉRATION ASCII ART =====
   const textInput = document.getElementById("text-input")
   const generateButton = document.getElementById("generate-button")
   const asciiOutput = document.getElementById("ascii-output-text")
@@ -58,24 +86,27 @@ document.addEventListener("DOMContentLoaded", () => {
       // Nettoyer le texte : remplacer \r\n par \n, puis \r par \n
       const cleanedText = textToConvert.replace(/\r\n/g, "\n").replace(/\r/g, "\n")
 
-      // Envoyer en URL encoded au lieu de FormData pour éviter les \r parasites
-      const params = new URLSearchParams()
-      params.append("text", cleanedText)
-      params.append("banner", selectedBanner)
+      console.log("Envoi au serveur:", { text: cleanedText, banner: selectedBanner })
 
       const response = await fetch("/ascii-art", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/json"
         },
-        body: params
+        body: JSON.stringify({
+          text: cleanedText,
+          banner: selectedBanner
+        })
       })
 
       if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`)
+        const errorText = await response.text()
+        console.error("Erreur serveur:", errorText)
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`)
       }
 
       const asciiArt = await response.text()
+      console.log("Réponse du serveur reçue")
       
       // Afficher l'ASCII Art généré
       asciiOutput.textContent = asciiArt
@@ -94,17 +125,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
   copyAsciiBtn.addEventListener("click", () => {
     const asciiContent = asciiOutput.textContent
-    navigator.clipboard.writeText(asciiContent).then(() => {
-      // Feedback visuel : changer temporairement le texte du bouton
+    
+    // Essayer d'abord avec l'API Clipboard moderne
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(asciiContent).then(() => {
+        // Feedback visuel : changer temporairement le texte du bouton
+        const originalTitle = copyAsciiBtn.title
+        copyAsciiBtn.title = "Copié !"
+        setTimeout(() => {
+          copyAsciiBtn.title = originalTitle
+        }, 2000)
+      }).catch((err) => {
+        console.error("Erreur clipboard:", err)
+        fallbackCopy(asciiContent)
+      })
+    } else {
+      // Fallback pour les anciens navigateurs
+      fallbackCopy(asciiContent)
+    }
+  })
+
+  // Fallback pour la copie (compatible avec Firefox et autres)
+  function fallbackCopy(text) {
+    const textarea = document.createElement("textarea")
+    textarea.value = text
+    textarea.style.position = "fixed"
+    textarea.style.opacity = "0"
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      document.execCommand("copy")
       const originalTitle = copyAsciiBtn.title
       copyAsciiBtn.title = "Copié !"
       setTimeout(() => {
         copyAsciiBtn.title = originalTitle
       }, 2000)
-    }).catch(() => {
+    } catch (err) {
+      console.error("Erreur copie:", err)
       alert("Erreur lors de la copie")
-    })
-  })
+    }
+    document.body.removeChild(textarea)
+  }
 
   // Fonction pour télécharger un fichier texte
   function downloadTextFile(content, filename) {

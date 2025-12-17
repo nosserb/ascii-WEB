@@ -15,6 +15,24 @@
   --success-green: #00ff88;
 }
 
+/* Mode Jour */
+body.light-mode {
+  --bg-color-dark: rgba(245, 245, 250, 0.95);
+  --panel-bg: rgba(255, 255, 255, 0.9);
+  --border-color: #d0d5e0;
+  --border-glow: rgba(70, 130, 230, 0.3);
+  --text-color: #1a1a2e;
+  --text-secondary: #555555;
+  --input-bg: #f5f5f5;
+  --primary-color: #4682e6;
+  --primary-hover: #3566cc;
+  --button-bg: #e0e5f0;
+  --button-hover: #d0d5e0;
+  --accent-orange: #ff8c42;
+  --success-green: #00aa66;
+  background-color: #f5f5f5;
+}
+
 /* Styles de base */
 * {
   margin: 0;
@@ -36,6 +54,7 @@ body {
   align-items: flex-start;
   min-height: 100vh;
   padding: 20px 0;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .container {
@@ -69,7 +88,8 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(138, 180, 248, 0.1);
   backdrop-filter: blur(10px);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 1;
 }
 
 .header::before {
@@ -108,6 +128,11 @@ body {
   background-clip: text;
   text-shadow: 0 2px 20px rgba(138, 180, 248, 0.3);
   z-index: 1;
+}
+
+.header .tooltip {
+  margin-left: 20px;
+  z-index: 100;
 }
 
 /* Contenu Principal */
@@ -575,4 +600,174 @@ body {
 .copy-btn:hover svg {
   fill: var(--primary-hover);
   transform: translateY(1px);
+}
+
+/* From Uiverse.io by SmookyDev */ 
+/* Tooltip Styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-family: "Arial", sans-serif;
+  z-index: 100;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 250px;
+  background-color: rgba(50, 50, 50, 0.95);
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 12px;
+  position: absolute;
+  z-index: 101;
+  top: 100%;
+  left: 50%;
+  margin-left: -125px;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.9em;
+  border: 1px solid var(--border-color);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  margin-left: -10px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent rgba(50, 50, 50, 0.95) transparent;
+}
+
+.tooltip .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #6b9cec 100%);
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(138, 180, 248, 0.3);
+  transition: all 0.3s ease;
+}
+
+.tooltip .icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(138, 180, 248, 0.5);
+}
+
+/* From Uiverse.io by JustCode14 */ 
+/* Theme Switch */
+/* The switch - the box around the slider */
+.switch {
+  font-size: 17px;
+  position: fixed;
+  display: inline-block;
+  width: 4em;
+  height: 2.2em;
+  border-radius: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2a2a2a;
+  transition: 0.4s;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.2em;
+  width: 1.2em;
+  border-radius: 20px;
+  left: 0.5em;
+  bottom: 0.5em;
+  transition: 0.4s;
+  transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
+  box-shadow: inset 8px -4px 0px 0px #fff;
+}
+
+.switch input:checked + .slider {
+  background-color: #00a6ff;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(1.8em);
+  box-shadow: inset 15px -4px 0px 15px #ffcf48;
+}
+
+.star {
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  width: 5px;
+  transition: all 0.4s;
+  height: 5px;
+}
+
+.star_1 {
+  left: 2.5em;
+  top: 0.5em;
+}
+
+.star_2 {
+  left: 2.2em;
+  top: 1.2em;
+}
+
+.star_3 {
+  left: 3em;
+  top: 0.9em;
+}
+
+.switch input:checked ~ .slider .star {
+  opacity: 0;
+}
+
+.cloud {
+  width: 3.5em;
+  position: absolute;
+  bottom: -1.4em;
+  left: -1.1em;
+  opacity: 0;
+  transition: all 0.4s;
+}
+
+.switch input:checked ~ .slider .cloud {
+  opacity: 1;
 }
