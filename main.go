@@ -1,90 +1,106 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
+	"html/template"
 	"log"
 	"net/http"
 	"strings"
 )
 
+var templates *template.Template
+
+func init() {
+	// Analyser tous les templates
+	var err error
+	templates, err = template.ParseGlob("templates/*.html")
+	if err != nil {
+		log.Fatalf("Error parsing templates: %v", err)
+	}
+	// Ajouter aussi index.html de la racine
+	if _, err := templates.ParseGlob("index.html"); err != nil {
+		log.Fatalf("Error parsing index.html: %v", err)
+	}
+}
+
 func main() {
-	mux := http.NewServeMux()
+	// Servir les fichiers statiques
+	http.Handle("/style.css", http.FileServer(http.Dir(".")))
+	http.Handle("/script.js", http.FileServer(http.Dir(".")))
+	http.Handle("/image/", http.StripPrefix("/image/", http.FileServer(http.Dir("image"))))
 
-	// Middleware pour les headers CORS
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-
-		mux.ServeHTTP(w, r)
-	})
-
-	// Serveur de fichiers statiques pour tous les fichiers
-	mux.Handle("/", http.FileServer(http.Dir(".")))
-
-	// Route pour l'API ASCII art
-	mux.HandleFunc("/ascii-art", asciiArtHandler)
+	// Routes
+	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/ascii-art", asciiArtHandler)
 
 	// Démarrer le serveur
 	port := ":8080"
 	fmt.Printf("Server starting on http://localhost%s\n", port)
-	if err := http.ListenAndServe(port, handler); err != nil {
+	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		errorHandler(w, http.StatusNotFound)
+		return
+	}
+	if r.Method != http.MethodGet {
+		errorHandler(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := templates.ExecuteTemplate(w, "index.html", nil); err != nil {
+		log.Printf("Error executing template: %v", err)
+		errorHandler(w, http.StatusInternalServerError)
 	}
 }
 
 func asciiArtHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		errorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Lire le body brut d'abord
-	bodyBytes, _ := io.ReadAll(r.Body)
-	log.Printf("Raw body received: %q", string(bodyBytes))
-
-	// Décoder le JSON
-	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-	var payload struct {
-		Text   string `json:"text"`
-		Banner string `json:"banner"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		log.Printf("Error decoding JSON: %v", err)
-		http.Error(w, "Bad request - invalid JSON", http.StatusBadRequest)
-		return
-	}
-
-	text := payload.Text
-	banner := payload.Banner
-
-	log.Printf("Decoded - text: %q, banner: %q", text, banner)
+	r.ParseForm()
+	text := r.FormValue("text")
+	banner := r.FormValue("banner")
 
 	// Nettoyer les \r
 	text = strings.ReplaceAll(text, "\r", "")
 
 	if text == "" {
-		log.Printf("Text is empty")
-		http.Error(w, "Bad request - empty text", http.StatusBadRequest)
+		errorHandler(w, http.StatusBadRequest)
 		return
 	}
 
 	result, err := AsciiArt(text, banner)
 	if err != nil {
 		log.Printf("Error generating ASCII art: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		errorHandler(w, http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Write([]byte(result))
+}
+
+func errorHandler(w http.ResponseWriter, status int) {
+	w.WriteHeader(status)
+	if status == http.StatusNotFound {
+		if err := templates.ExecuteTemplate(w, "404.html", nil); err != nil {
+			log.Printf("Error executing 404 template: %v", err)
+		}
+	} else if status == http.StatusInternalServerError {
+		if err := templates.ExecuteTemplate(w, "500.html", nil); err != nil {
+			log.Printf("Error executing 500 template: %v", err)
+		}
+	} else if status == http.StatusBadRequest {
+		if err := templates.ExecuteTemplate(w, "400.html", nil); err != nil {
+			log.Printf("Error executing 400 template: %v", err)
+		}
+	} else {
+		// Message d'erreur par défaut
+		http.Error(w, http.StatusText(status), status)
+	}
 }
