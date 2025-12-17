@@ -429,12 +429,14 @@ body {
   color: var(--text-color);
   font-size: 1.1em;
   resize: none;
-  margin: 0;
-  white-space: pre-wrap;
-  overflow-y: auto;
+  margin: 0;  
   font-family: "Consolas", "Monaco", "Courier New", monospace;
   line-height: 1.4;
   transition: all 0.3s ease;
+  width: 50vw;
+  overflow: auto;
+  height: auto;
+  margin-bottom: auto;
 }
 
 #ascii-output-text:focus,
